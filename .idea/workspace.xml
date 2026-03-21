@@ -17,6 +17,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -25,39 +28,40 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.create_shortcut.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dgfhdfgdf.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dialog_windows.executor&quot;: &quot;Run&quot;,
-    &quot;Python.directions_controller.executor&quot;: &quot;Run&quot;,
-    &quot;Python.dsdsf.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (2).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.models.executor&quot;: &quot;Run&quot;,
-    &quot;Python.new.executor&quot;: &quot;Run&quot;,
-    &quot;Python.others.executor&quot;: &quot;Run&quot;,
-    &quot;Python.parents_connection_to_students_controller.executor&quot;: &quot;Run&quot;,
-    &quot;Python.parents_controller.executor&quot;: &quot;Run&quot;,
-    &quot;Python.students_connection_to_directions_controller.executor&quot;: &quot;Run&quot;,
-    &quot;Python.students_connection_to_group_controller.executor&quot;: &quot;Run&quot;,
-    &quot;Python.students_controller.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.ываыва.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Pycharm/Projects/it_cube_project&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.create_shortcut.executor": "Run",
+    "Python.dgfhdfgdf.executor": "Run",
+    "Python.dialog_windows.executor": "Run",
+    "Python.directions_controller.executor": "Run",
+    "Python.dsdsf.executor": "Run",
+    "Python.main (1).executor": "Run",
+    "Python.main (2).executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.models.executor": "Run",
+    "Python.new.executor": "Run",
+    "Python.others.executor": "Run",
+    "Python.parents_connection_to_students_controller.executor": "Run",
+    "Python.parents_controller.executor": "Run",
+    "Python.students_connection_to_directions_controller.executor": "Run",
+    "Python.students_connection_to_group_controller.executor": "Run",
+    "Python.students_controller.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.ываыва.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "D:/Pycharm/Projects/it_cube_project",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "terminal",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Pycharm\Projects\it_cube_project" />
