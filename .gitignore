@@ -1,18 +1,19 @@
-# IDE
-.idea/
-.vscode/
-*.iml
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+
+# Virtual Environment
+.venv/
 venv/
 env/
-.venv/
-.env
+
+# IDE
+.idea/
+.vscode/
+*.iml
 
 # OS
 .DS_Store
