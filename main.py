@@ -57,19 +57,20 @@ class Teachers(QMainWindow):
         uic.loadUi(resource_path("ui_models/teachers.ui"), self)
         self.setWindowTitle("Учителя")
 
-        #Блокировка стандартных кнопок окна
+        # Блокировка стандартных кнопок окна
         disabling_buttons(self)
 
-        #Кнопки окна и строка поиска
+        # Кнопки окна и строка поиска
         self.close_btn.clicked.connect(lambda: close_user_window(self))
         self.add_teacher.clicked.connect(self.open_add_teacher)
         self.search_field.textChanged.connect(lambda text: self.on_search_text_changed(text))
 
-        #Загрузка данных на странице
+        # Загрузка данных на странице
         self.load_table()
 
     def load_table(self):
         self.data = get_all_teachers()
+        self.teachers_list.clear()
         self.teachers_list.setColumnCount(8)
         self.teachers_list.setHorizontalHeaderLabels(
             ["ID", "Фамилия", "Имя", "Отчество", "Номер телефона", "Электронная почта", "Действие",
@@ -100,8 +101,7 @@ class Teachers(QMainWindow):
         if result == QMessageBox.StandardButton.Yes:
             delete_teacher(row_id)
             delete_teacher_to_group_connection(row_id)
-            self.data = get_all_teachers()
-            self.load_table(self.data)
+            self.load_table()
 
     def update_row(self, row_id):
         self.update_teacher_window = AddTeacher("teachers", row_id)
@@ -136,11 +136,11 @@ class AddTeacher(QMainWindow):
         self.teacher_id = teacher_id
         self.data = []
 
-        #Кнопки окна
-        #self.close_btn.clicked.connect(lambda: back_to_user_window(self))
+        # Кнопки окна
+        # self.close_btn.clicked.connect(lambda: back_to_user_window(self))
         self.close_btn.clicked.connect(self.close_add_teacher_window)
 
-        #Отключение стандартных кнопок окна
+        # Отключение стандартных кнопок окна
         disabling_buttons(self)
 
         if self.teacher_id != 0:
@@ -148,60 +148,15 @@ class AddTeacher(QMainWindow):
             self.add_teacher.clicked.connect(self.update_teacher_func)
             self.add_teacher.setText("Сохранить")
         else:
-            self.data = [self.teacher_id, self.surname.text(), self.name.text(), self.father_name.text(), self.phone_number.text(),
-              self.email.text(), self.notes.toPlainText()]
+            self.data = [self.surname.text(), self.name.text(), self.father_name.text(),
+                         self.phone_number.text(),
+                         self.email.text(), self.notes.toPlainText()]
             self.add_teacher.clicked.connect(self.add_teacher_func)
 
-    def add_teacher_func(self):
-        data = [self.surname.text(), self.name.text(), self.father_name.text(), self.phone_number.text(),
-              self.email.text(), self.notes.toPlainText()]
-        if add_teacher(data):
-            msg = QMessageBox()
-            msg.setWindowTitle("QMessageBox")
-            msg.setText("Педагог успешно добавлен!")
-            msg.setStandardButtons(QMessageBox.StandardButton.Yes)
-            msg.exec()
-        else:
-            msg = QMessageBox()
-            msg.setWindowTitle("QMessageBox")
-            msg.setText("Ошибка")
-            msg.setStandardButtons(QMessageBox.StandardButton.Yes)
-            msg.exec()
-        self.surname.clear()
-        self.name.clear()
-        self.father_name.clear()
-        self.phone_number.clear()
-        self.email.clear()
-        self.notes.clear()
-
-    def update_teacher_func(self):
-        data = [self.teacher[0], self.surname.text(), self.name.text(), self.father_name.text(), self.phone_number.text(),
-              self.email.text(), self.notes.toPlainText()]
-        if update_teacher(data):
-            msg = QMessageBox()
-            msg.setWindowTitle("QMessageBox")
-            msg.setText("Данные преподавателя обновлены")
-            msg.setStandardButtons(QMessageBox.StandardButton.Yes)
-            msg.exec()
-        else:
-            msg = QMessageBox()
-            msg.setWindowTitle("QMessageBox")
-            msg.setText("Ошибка")
-            msg.setStandardButtons(QMessageBox.StandardButton.Yes)
-            msg.exec()
-
-    def load_data(self):
-        self.data = get_teacher_by_id(self.teacher_id)
-        self.surname.setText(self.data[1])
-        self.name.setText(self.data[2])
-        self.father_name.setText(self.data[3])
-        self.phone_number.setText(self.data[4])
-        self.email.setText(self.data[5])
-        self.notes.setText(self.data[6])
-
     def close_add_teacher_window(self):
-        data = [self.teacher_id, self.surname.text(), self.name.text(), self.father_name.text(), self.phone_number.text(),
-              self.email.text(), self.notes.toPlainText()]
+        data = [self.teacher_id, self.surname.text(), self.name.text(), self.father_name.text(),
+                self.phone_number.text(),
+                self.email.text(), self.notes.toPlainText()]
         if data != self.data:
             msg = QMessageBox()
             msg.setWindowTitle("QMessageBox")
@@ -215,7 +170,59 @@ class AddTeacher(QMainWindow):
                     self.update_teacher_func()
         back_to_user_window(self)
 
+    def add_teacher_func(self):
+        data = [self.surname.text(), self.name.text(), self.father_name.text(), self.phone_number.text(),
+                self.email.text(), self.notes.toPlainText()]
+        res = add_teacher(data)
+        if res["succes"]:
+            msg = QMessageBox()
+            msg.setWindowTitle("QMessageBox")
+            msg.setText("Педагог успешно добавлен!")
+            msg.setStandardButtons(QMessageBox.StandardButton.Yes)
+            msg.exec()
+            self.teacher_id = res["new_data"]
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("QMessageBox")
+            msg.setText(f"Ошибка\n{'\n'.join(res["message"])}")
+            msg.setStandardButtons(QMessageBox.StandardButton.Yes)
+            msg.exec()
+        self.surname.clear()
+        self.name.clear()
+        self.father_name.clear()
+        self.phone_number.clear()
+        self.email.clear()
+        self.notes.clear()
+        back_to_user_window(self)
 
+    def update_teacher_func(self):
+        data = [self.teacher_id, self.surname.text(), self.name.text(), self.father_name.text(),
+                self.phone_number.text(),
+                self.email.text(), self.notes.toPlainText()]
+        update_data = update_teacher(data)
+        if update_data["succes"]:
+            self.data = data.copy()
+            msg = QMessageBox()
+            msg.setWindowTitle("QMessageBox")
+            msg.setText("Данные преподавателя обновлены")
+            msg.setStandardButtons(QMessageBox.StandardButton.Yes)
+            msg.exec()
+        else:
+            self.load_data()
+            msg = QMessageBox()
+            msg.setWindowTitle("QMessageBox")
+            msg.setText(f"Ошибка\n{'\n'.join(update_data["message"])}")
+            msg.setStandardButtons(QMessageBox.StandardButton.Yes)
+            msg.exec()
+
+    def load_data(self):
+        self.data = get_teacher_by_id(self.teacher_id)
+        self.surname.setText(self.data[1])
+        self.name.setText(self.data[2])
+        self.father_name.setText(self.data[3])
+        self.phone_number.setText(self.data[4])
+        self.email.setText(self.data[5])
+        self.notes.setText(self.data[6])
 
 
 class Students(QMainWindow):
@@ -538,7 +545,7 @@ class Directions(QMainWindow):
             button.clicked.connect(lambda _, x=code: self.show_message(x))
 
     def open_add_direction(self):
-        self.add_direction = AddDirection("directions")
+        self.add_direction = AddDirection()
         self.add_direction.show()
         self.hide()
 
@@ -549,7 +556,7 @@ class Directions(QMainWindow):
 
 
 class AddDirection(QMainWindow):
-    def __init__(self, type_of_user_window):
+    def __init__(self, type_of_user_window="directions"):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_update_direction.ui'), self)
         self.type_of_user_window = type_of_user_window
@@ -643,7 +650,7 @@ class AddGroup(QMainWindow):
             self.group_info = get_all_groups_by_id_list([self.group_id])[0]
             self.group_name.setText(self.group_info[1])
             self.teacher_info = get_teacher_by_id(get_connection_by_group_id(self.group_id))
-            self.set_teacher()
+            self.set_teacher(self.teacher_info)
             self.start_of_the_course.setDate(QDate.fromString(self.group_info[2], "dd.MM.yyyy"))
             self.end_of_the_course.setDate(QDate.fromString(self.group_info[3], "dd.MM.yyyy"))
             self.enroll_student.setEnabled(True)
@@ -673,11 +680,15 @@ class AddGroup(QMainWindow):
         self.groups.show()
         self.hide()
 
-    def set_teacher(self):
-        for i in range(self.teacher.count()):
-            if self.teacher.itemData(i) == self.teacher_info[0]:
-                self.teacher.setCurrentIndex(i)
-                break
+    def set_teacher(self, teacher_id):
+        if teacher_id:
+            for i in range(self.teacher.count()):
+                if self.teacher.itemData(i) == teacher_id:
+                    self.teacher.setCurrentIndex(i)
+                    break
+        else:
+            self.teacher.setCurrentIndex(0)
+
 
     def update_group(self):
         group_name = self.group_name.text()

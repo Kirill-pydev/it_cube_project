@@ -5,11 +5,8 @@ from core.others import *
 
 
 def get_all_teachers():
-    # data = [[1, "Старцев", "Кирилл", "Денисович", "+79827968538", "kirillgame912@gmail.com", "Пропуск"], [2, "Баталов", "Вадим", "Алексеевич", "+79124561768", "vdm.izh@gmail.com", "Гений"], [3, "Фефилова", "Полина", "Дмитриевна", "+79127669176", "poli.fefa@gmail.com", "Самая умная"]]
     with Session(engine) as session:
         teachers = session.query(Teacher).all()
-
-        # Преобразуем объекты Teacher в список списков
         result = [
             [
                 teacher.id,
@@ -26,10 +23,15 @@ def get_all_teachers():
     return result
 
 
-
 def add_teacher(data):
-    if is_valid_phone_number(data[3]) and is_valid_email(data[4]):
-        surname, name, father_name, phone, email, notes = data
+    surname, name, father_name, phone, email, notes = data
+    valid_number, valid_email = False, False
+    res = {"new_data": [], "succes": False, "message": []}
+    if (phone != "" and is_valid_phone_number(phone)) or phone == "":
+        valid_number = True
+    if (email != "" and is_valid_email(email)) or email == "":
+        valid_email = True
+    if valid_email and valid_email and [surname, name, father_name].count("") <= 2:
         teacher = Teacher(
             surname=surname,
             name=name,
@@ -42,8 +44,17 @@ def add_teacher(data):
         with Session(engine) as session:
             session.add(teacher)
             session.commit()
-        return True
-    return False
+            res["new_data"].append(teacher.id)
+            res["succes"] = True
+            res["message"].append("Ok")
+    else:
+        if not valid_email:
+            res["message"].append("Неверный формат электронной почты")
+        if not valid_number:
+            res["message"].append("Неверный формат номера телефона")
+        if [surname, name, father_name].count("") == 3:
+            res["message"].append("Заполните хотя бы одно поле с инициалами")
+    return res
 
 
 def delete_teacher(teacher_id):
@@ -58,28 +69,43 @@ def delete_teacher(teacher_id):
 
 
 def update_teacher(data):
-    if is_valid_phone_number(data[4]) and is_valid_email(data[5]):
-        teacher_id, surname, name, father_name, phone, email, notes = data
+    teacher_id, surname, name, father_name, phone, email, notes = data
+    res = {"succes": False, "message": []}
+    valid_number, valid_email = False, False
+    if (phone != "" and is_valid_phone_number(phone)) or phone == "":
+        valid_number = True
+    if (email != "" and is_valid_email(email)) or email == "":
+        valid_email = True
+    if valid_number and valid_email and [surname, name, father_name].count("") <= 2:
         with Session(engine) as session:
             teacher = session.get(Teacher, teacher_id)
             if not teacher:
-                return False  # учитель не найден
-
-            # Обновляем поля
+                res['message'].append("Учитель не найден")
+                return res
             teacher.surname = surname
             teacher.name = name
             teacher.father_name = father_name
             teacher.phone = phone
             teacher.email = email
             teacher.notes = notes
-
             session.commit()
-            return True
+            res['succes'] = True
+            res['message'].append("Ok")
     else:
-        return False
+        if not valid_email:
+            res["message"].append("Неверный формат электронной почты")
+        if not valid_number:
+            res["message"].append("Неверный формат номера телефона")
+        if [surname, name, father_name].count("") == 3:
+            res["message"].append("Заполните хотя бы одно поле с инициалами")
+    return res
 
 
 def get_teacher_by_id(teacher_id):
-    with Session(engine) as session:
-        teacher = session.query(Teacher).filter(Teacher.id == teacher_id).one_or_none()
-        return [teacher.id, teacher.surname, teacher.name, teacher.father_name, teacher.phone, teacher.email, teacher.notes]
+    if teacher_id:
+        with Session(engine) as session:
+            teacher = session.query(Teacher).filter(Teacher.id == teacher_id).one_or_none()
+            return [teacher.id, teacher.surname, teacher.name, teacher.father_name, teacher.phone, teacher.email,
+                    teacher.notes]
+    else:
+        return False

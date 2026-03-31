@@ -13,7 +13,7 @@ def add_new_teacher_to_group_connection(group_id, teacher_id):
 def get_connection_by_group_id(group_id):
     with Session(engine) as session:
         connection = session.query(TeachersConnectionToGroup).filter(TeachersConnectionToGroup.group_id == group_id).one_or_none()
-        return connection.teacher_id
+        return connection
 
 def update_teacher_to_group_connection(data):
     group_id, teacher_id = data
