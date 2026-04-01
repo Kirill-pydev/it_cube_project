@@ -56,6 +56,7 @@ class Teachers(QMainWindow):
         super().__init__()
         uic.loadUi(resource_path("ui_models/teachers.ui"), self)
         self.setWindowTitle("Учителя")
+        self.setFixedWidth(1102)
 
         # Блокировка стандартных кнопок окна
         disabling_buttons(self)
@@ -131,10 +132,10 @@ class AddTeacher(QMainWindow):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_teacher.ui'), self)
         self.setWindowTitle("Добавление учителя")
+        self.setFixedSize(851, 521)
 
         self.type_of_user_window = type_of_user_window
         self.teacher_id = teacher_id
-        self.data = []
 
         # Кнопки окна
         # self.close_btn.clicked.connect(lambda: back_to_user_window(self))
@@ -148,7 +149,7 @@ class AddTeacher(QMainWindow):
             self.add_teacher.clicked.connect(self.update_teacher_func)
             self.add_teacher.setText("Сохранить")
         else:
-            self.data = [self.surname.text(), self.name.text(), self.father_name.text(),
+            self.data = [self.teacher_id, self.surname.text(), self.name.text(), self.father_name.text(),
                          self.phone_number.text(),
                          self.email.text(), self.notes.toPlainText()]
             self.add_teacher.clicked.connect(self.add_teacher_func)
@@ -164,7 +165,7 @@ class AddTeacher(QMainWindow):
             msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             result = msg.exec()
             if result == QMessageBox.StandardButton.Yes:
-                if len(self.data) == 6:
+                if self.data[0] == 0:
                     self.add_teacher_func()
                 else:
                     self.update_teacher_func()
@@ -229,6 +230,7 @@ class Students(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi(resource_path("ui_models/students.ui"), self)
+        self.setFixedWidth(1453)
 
         # Кнопки
         self.add_student_button.clicked.connect(self.open_add_student)
@@ -314,6 +316,7 @@ class AddStudent(QMainWindow):
     def __init__(self, previous_window="students", student_id=0):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_student.ui'), self)
+        self.setFixedSize(800, 793)
         self.student_id = student_id
         self.type_of_user_window = previous_window
         self.parents = []
@@ -529,6 +532,7 @@ class Directions(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi(resource_path('ui_models/directions.ui'), self)
+        self.setFixedWidth(800)
         directions = get_all_directions()
         self.close_btn.clicked.connect(lambda: close_user_window(self))
         self.add_direction.clicked.connect(self.open_add_direction)
@@ -559,6 +563,7 @@ class AddDirection(QMainWindow):
     def __init__(self, type_of_user_window="directions"):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_update_direction.ui'), self)
+        self.setFixedSize(521, 209)
         self.type_of_user_window = type_of_user_window
         self.close_btn.clicked.connect(lambda: back_to_user_window(self))
         disabling_buttons(self)
@@ -579,6 +584,7 @@ class Groups(QMainWindow):
     def __init__(self, direction_id, type_of_user_window="directions"):
         super().__init__()
         uic.loadUi(resource_path('ui_models/groups.ui'), self)
+        self.setFixedWidth(800)
         disabling_buttons(self)
         self.type_of_user_window = type_of_user_window
         self.direction_id = direction_id
@@ -631,6 +637,7 @@ class AddGroup(QMainWindow):
     def __init__(self, direction_id=None, group_id=None):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_update_group.ui'), self)
+        self.setFixedSize(800, 827)
         disabling_buttons(self)
         self.group_id = group_id
         self.direction_id = direction_id
@@ -731,6 +738,7 @@ class EnrollStudent(QMainWindow):
     def __init__(self, code):
         super().__init__()
         uic.loadUi(resource_path('ui_models/enroll_student.ui'), self)
+        self.setFixedWidth(1103)
         self.code = code
         self.close_btn.clicked.connect(self.close_enroll_students_window)
         disabling_buttons(self)
@@ -792,6 +800,7 @@ class Parents(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi(resource_path('ui_models/parents.ui'), self)
+        self.setFixedWidth(1103)
         self.close_btn.clicked.connect(lambda: close_user_window(self))
         self.search_field.textChanged.connect(lambda text: self.on_search_text_changed(text))
         disabling_buttons(self)
@@ -852,6 +861,7 @@ class AddParent(QMainWindow):
     def __init__(self, previous_window="parents", student_id=0, parent_id=0):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_parent.ui'), self)
+        self.setFixedSize(800, 437)
         self.type_of_user_window = previous_window
         disabling_buttons(self)
         self.student_id = student_id
@@ -951,6 +961,7 @@ class GroupsHistory(QMainWindow):
     def __init__(self, student_id):
         super().__init__()
         uic.loadUi(resource_path("ui_models/history_of_directions.ui"), self)
+        self.setFixedSize(1040, 600)
         disabling_buttons(self)
         self.student_id = student_id
         self.close_btn.clicked.connect(self.close_history_window)
