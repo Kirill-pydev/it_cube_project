@@ -69,6 +69,7 @@ class Teachers(QMainWindow):
         # Загрузка данных на странице
         self.load_table()
 
+    # загрузка данных
     def load_table(self):
         self.data = get_all_teachers()
         self.teachers_list.clear()
@@ -94,6 +95,7 @@ class Teachers(QMainWindow):
                     self.teachers_list.setItem(i, j, item)
         self.teachers_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
+    # функция удаления учителя
     def delete_row(self, row_id):
         msg = QMessageBox()
         msg.setText("Удалить преподавателя?")
@@ -104,16 +106,19 @@ class Teachers(QMainWindow):
             delete_teacher_to_group_connection(row_id)
             self.load_table()
 
+    # функция открытия окна редактирования данных преподавателя
     def update_row(self, row_id):
         self.update_teacher_window = AddTeacher("teachers", row_id)
         self.update_teacher_window.show()
         self.hide()
 
+    # функция открытия окна добавления нового преподавателя
     def open_add_teacher(self):
         self.add_teacher_window = AddTeacher("teachers")
         self.add_teacher_window.show()
         self.hide()
 
+    # функция поиска по таблице
     def on_search_text_changed(self, text):
         search_text = text.lower()
         columns_to_search = [0, 1, 2, 3]
@@ -138,7 +143,6 @@ class AddTeacher(QMainWindow):
         self.teacher_id = teacher_id
 
         # Кнопки окна
-        # self.close_btn.clicked.connect(lambda: back_to_user_window(self))
         self.close_btn.clicked.connect(self.close_add_teacher_window)
 
         # Отключение стандартных кнопок окна
@@ -154,6 +158,7 @@ class AddTeacher(QMainWindow):
                          self.email.text(), self.notes.toPlainText()]
             self.add_teacher.clicked.connect(self.add_teacher_func)
 
+    # функция закрытия окна добавления/редактирования данных преподавателя
     def close_add_teacher_window(self):
         data = [self.teacher_id, self.surname.text(), self.name.text(), self.father_name.text(),
                 self.phone_number.text(),
@@ -171,6 +176,7 @@ class AddTeacher(QMainWindow):
                     self.update_teacher_func()
         back_to_user_window(self)
 
+    # функция добавления нового преподавателя в базу данных
     def add_teacher_func(self):
         data = [self.surname.text(), self.name.text(), self.father_name.text(), self.phone_number.text(),
                 self.email.text(), self.notes.toPlainText()]
@@ -196,6 +202,7 @@ class AddTeacher(QMainWindow):
         self.notes.clear()
         back_to_user_window(self)
 
+    # функция обновления данных преподавателя
     def update_teacher_func(self):
         data = [self.teacher_id, self.surname.text(), self.name.text(), self.father_name.text(),
                 self.phone_number.text(),
@@ -216,6 +223,7 @@ class AddTeacher(QMainWindow):
             msg.setStandardButtons(QMessageBox.StandardButton.Yes)
             msg.exec()
 
+    # загрузка данных
     def load_data(self):
         self.data = get_teacher_by_id(self.teacher_id)
         self.surname.setText(self.data[1])
@@ -244,6 +252,7 @@ class Students(QMainWindow):
 
         self.load_table()
 
+    # загрузка данных
     def load_table(self):
         self.data = get_all_students()
         self.students_list.setColumnCount(15)
@@ -277,6 +286,7 @@ class Students(QMainWindow):
                     self.students_list.setItem(i, j, item)
         self.students_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
+    # функция удаления ученика
     def delete_row(self, row_id):
         msg = QMessageBox()
         msg.setText("Удалить ученика?")
@@ -288,11 +298,13 @@ class Students(QMainWindow):
             delete_parent(parents_id)
             self.load_table()
 
+    # функция открытия окна для редактирования даанных ученика
     def update_row(self, row_id):
         self.update_student_window = AddStudent(student_id=row_id)
         self.update_student_window.show()
         self.hide()
 
+    # функция поиска по таблице
     def on_search_text_changed(self, text):
         search_text = text.lower()
         # Индексы столбцов, где будет поиск
@@ -306,6 +318,7 @@ class Students(QMainWindow):
                     break
             self.students_list.setRowHidden(row, not match)
 
+    # функция открытия окна для добавления нового ученика
     def open_add_student(self):
         self.add_student_window = AddStudent()
         self.add_student_window.show()
@@ -317,12 +330,18 @@ class AddStudent(QMainWindow):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_student.ui'), self)
         self.setFixedSize(800, 793)
+        disabling_buttons(self)
+
+        # необходимые переменные
         self.student_id = student_id
         self.type_of_user_window = previous_window
         self.parents = []
         self.data = []
-        self.close_btn.clicked.connect(self.close_current_window)
-        self.open_history.clicked.connect(self.open_student_learning_history)
+
+        self.close_btn.clicked.connect(self.close_current_window) # закрытие окна
+        self.open_history.clicked.connect(self.open_student_learning_history) # просмотр истории обучения
+
+        # функционал добавления/удаления/редактирования данных родителей ученика
         self.add_parent_1.clicked.connect(self.add_parent_func_1)
         self.add_parent_2.clicked.connect(self.add_parent_func_2)
         self.add_parent_1.setEnabled(False)
@@ -336,7 +355,7 @@ class AddStudent(QMainWindow):
         self.update_parent_1.hide()
         self.delete_parent_2.hide()
         self.update_parent_2.hide()
-        disabling_buttons(self)
+
         if self.student_id != 0:
             self.load_data()
             self.add_parent_1.setEnabled(True)
@@ -354,6 +373,7 @@ class AddStudent(QMainWindow):
                          self.agreement_for_processing.isChecked(), self.agreement_for_shooting.isChecked()]
             self.add_student_button.clicked.connect(self.add_student_func)
 
+    # функция добавлния нового ученика в базу данных
     def add_student_func(self):
         surname = self.surname.text()
         name = self.name.text()
@@ -390,6 +410,7 @@ class AddStudent(QMainWindow):
             msg.setStandardButtons(QMessageBox.StandardButton.Ok)
             msg.exec()
 
+    # функция обновления данных существующего ученика
     def update_student_func(self):
         sp = [self.student_id, self.surname.text(), self.name.text(), self.father_name.text(), self.school.text(),
               self.gender.currentText(), self.birth_date.date().toString("dd.MM.yyyy"), self.class_number.text(),
@@ -413,6 +434,7 @@ class AddStudent(QMainWindow):
                 msg.exec()
                 button = False
 
+    # загрузка данных
     def load_data(self):
         self.data = get_student_by_id(self.student_id)
         self.surname.setText(self.data[1])
@@ -441,16 +463,13 @@ class AddStudent(QMainWindow):
                 self.delete_parent_2.show()
                 self.update_parent_2.show()
 
+    # функция для добавления родителя ученика (1)
     def add_parent_func_1(self):
         self.parents_w = AddParent(student_id=self.student_id)
         self.parents_w.text_submitted.connect(self.parent_1_label)
         self.parents_w.show()
 
-    def add_parent_func_2(self):
-        self.parents_w = AddParent(student_id=self.student_id)
-        self.parents_w.text_submitted.connect(self.parent_2_label)
-        self.parents_w.show()
-
+    # функция отображения ФИО родителя (1) в карточке ученика, после добавления родителя
     def parent_1_label(self, lst):
         self.parents.append(lst)
         self.add_parent_1.hide()
@@ -459,6 +478,13 @@ class AddStudent(QMainWindow):
         self.delete_parent_1.show()
         self.update_parent_1.show()
 
+    # функция для добавления родителя ученика (2)
+    def add_parent_func_2(self):
+        self.parents_w = AddParent(student_id=self.student_id)
+        self.parents_w.text_submitted.connect(self.parent_2_label)
+        self.parents_w.show()
+
+    # функция отображения ФИО родителя (2) в карточке ученика, после добавления родителя
     def parent_2_label(self, lst):
         self.parents.append(lst)
         self.add_parent_2.hide()
@@ -467,11 +493,13 @@ class AddStudent(QMainWindow):
         self.delete_parent_2.show()
         self.update_parent_2.show()
 
+    # функция открытия истории обучения ученика
     def open_student_learning_history(self):
         self.history = GroupsHistory(self.student_id)
         self.history.show()
         self.hide()
 
+    # удаление родителя
     def delete_parent(self, parent_position):
         msg = QMessageBox()
         msg.setText("Удалить данные о родителе?")
@@ -494,17 +522,20 @@ class AddStudent(QMainWindow):
                     self.delete_parent_2.hide()
                     self.update_parent_2.hide()
 
+    # обновления данных родителя
     def update_parent(self, parent_position):
         self.update_parent_window = AddParent(previous_window=self.type_of_user_window, student_id=self.student_id,
                                               parent_id=self.parents[parent_position][0])
         self.update_parent_window.show()
         self.hide()
 
+    # открытие списка всех родителей
     def open_parents(self):
         self.parents_window = Parents()
         self.parents_window.show()
         self.hide()
 
+    # функционал корректного закрытия окна редактирования данных ученика, для соблюдения правильной последовательности закрытия
     def close_current_window(self):
         sp = [self.student_id, self.surname.text(), self.name.text(), self.father_name.text(), self.school.text(),
               self.gender.currentText(), self.birth_date.date().toString("dd.MM.yyyy"), self.class_number.text(),
@@ -533,10 +564,14 @@ class Directions(QMainWindow):
         super().__init__()
         uic.loadUi(resource_path('ui_models/directions.ui'), self)
         self.setFixedWidth(800)
-        directions = get_all_directions()
+        disabling_buttons(self)
         self.close_btn.clicked.connect(lambda: close_user_window(self))
         self.add_direction.clicked.connect(self.open_add_direction)
-        disabling_buttons(self)
+
+        # необходимые переменные
+        directions = get_all_directions()
+
+        # заполнение данных
         for i in range(len(directions)):
             name = directions[i][1]
             code = directions[i][0]
@@ -548,11 +583,13 @@ class Directions(QMainWindow):
             self.directions_list.setItemWidget(btn, button)
             button.clicked.connect(lambda _, x=code: self.show_message(x))
 
+    # функция открытия окна для добавления нового направления
     def open_add_direction(self):
         self.add_direction = AddDirection()
         self.add_direction.show()
         self.hide()
 
+    # функцияя открытия окна направления
     def show_message(self, direction_id):
         self.add = Groups(direction_id)
         self.add.show()
@@ -564,11 +601,14 @@ class AddDirection(QMainWindow):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_update_direction.ui'), self)
         self.setFixedSize(521, 209)
-        self.type_of_user_window = type_of_user_window
-        self.close_btn.clicked.connect(lambda: back_to_user_window(self))
         disabling_buttons(self)
+        self.close_btn.clicked.connect(lambda: back_to_user_window(self))
         self.save.clicked.connect(self.save_direction)
 
+        # переменные
+        self.type_of_user_window = type_of_user_window
+
+    # создание нового направления
     def save_direction(self):
         data = [self.direction_name.text()]
         if add_direction(data):
@@ -586,21 +626,25 @@ class Groups(QMainWindow):
         uic.loadUi(resource_path('ui_models/groups.ui'), self)
         self.setFixedWidth(800)
         disabling_buttons(self)
-        self.type_of_user_window = type_of_user_window
-        self.direction_id = direction_id
-        groups_id = get_groups_id_by_direction_id(self.direction_id)
-        self.groups = get_all_groups_by_id_list(groups_id)
-        self.load_data()
         self.close_btn.clicked.connect(lambda: back_to_user_window(self))
         self.add_group.clicked.connect(self.add_new_group)
         self.delete_direction.clicked.connect(self.func_delete_direction)
 
+        # переменные
+        self.type_of_user_window = type_of_user_window
+        self.direction_id = direction_id
+
+        self.load_data()
+
+    # функция открытия окна для добавления новой группы
     def add_new_group(self):
         self.add_group_window = AddGroup(direction_id=self.direction_id)
         self.add_group_window.show()
         self.hide()
 
+    # загрузка данных
     def load_data(self):
+        self.groups = get_all_groups_by_id_list(get_groups_id_by_direction_id(self.direction_id))
         for i in range(len(self.groups)):
             name = self.groups[i][1]
             code = self.groups[i][0]
@@ -612,11 +656,13 @@ class Groups(QMainWindow):
             self.groups_list.setItemWidget(btn, button)
             button.clicked.connect(lambda _, x=code: self.show_message(x))
 
+    # взаимодействие с данными уже созданной группы
     def show_message(self, group_id):
-        self.open_group = AddGroup(group_id=group_id)
+        self.open_group = AddGroup(direction_id=self.direction_id, group_id=group_id)
         self.open_group.show()
         self.hide()
 
+    # функция удаления направления (если в направлении ещё не созданны группы)
     def func_delete_direction(self):
         if len(get_groups_id_by_direction_id(self.direction_id)) != 0:
             msg = QMessageBox()
@@ -634,43 +680,49 @@ class Groups(QMainWindow):
 
 
 class AddGroup(QMainWindow):
-    def __init__(self, direction_id=None, group_id=None):
+    def __init__(self, direction_id, group_id=None):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_update_group.ui'), self)
+        # всё, что связанно с окном
         self.setFixedSize(800, 827)
         disabling_buttons(self)
+        self.close_btn.clicked.connect(self.back_to_group)
+        self.enroll_student.clicked.connect(self.add_student_to_course)
+        self.enroll_student.setEnabled(False)
+
+        # переменные
         self.group_id = group_id
         self.direction_id = direction_id
-        if self.direction_id:
-            self.direction = get_direction_by_id(self.direction_id)
-            self.save.clicked.connect(self.save_new_group)
+        self.direction = get_direction_by_id(self.direction_id)
+        self.direction_name.setText(self.direction[1])
+
+        # заполнение выпадающего списка учителями
         teachers = get_all_teachers()
         self.teacher.addItem("Не выбран")
         for el in teachers:
             self.teacher.addItem(' '.join([el[1], el[2], el[3]]), userData=el[0])
-        self.close_btn.clicked.connect(self.back_to_group)
-        self.enroll_student.clicked.connect(self.add_student_to_course)
-        self.enroll_student.setEnabled(False)
+
+        # заполнение информации, если открывается окно уже существующей группы
         if self.group_id:
-            self.direction = get_direction_by_id(get_direction_id_by_group_id(self.group_id))
-            self.direction_id = self.direction[0]
+            self.save.clicked.connect(self.update_group)
             self.group_info = get_all_groups_by_id_list([self.group_id])[0]
             self.group_name.setText(self.group_info[1])
             self.teacher_info = get_teacher_by_id(get_connection_by_group_id(self.group_id))
-            self.set_teacher(self.teacher_info)
+            self.set_teacher(self.teacher_info[0])
             self.start_of_the_course.setDate(QDate.fromString(self.group_info[2], "dd.MM.yyyy"))
             self.end_of_the_course.setDate(QDate.fromString(self.group_info[3], "dd.MM.yyyy"))
             self.enroll_student.setEnabled(True)
-            self.save.clicked.connect(self.update_group)
-            self.students = get_students_by_id(get_students_id_by_group_id(self.group_id), 0)
-            self.load_table(self.students)
-        self.direction_name.setText(self.direction[1])
+            self.load_table()
+        else:
+            self.save.clicked.connect(self.save_new_group)
 
+    # функция открытия окна для зачисления учащихся в группу
     def add_student_to_course(self):
-        self.enroll_window = EnrollStudent(self.group_id)
+        self.enroll_window = EnrollStudent(group_id=self.group_id, direction_id=self.direction_id)
         self.enroll_window.show()
         self.hide()
 
+    # функция создания новой группы в базе данных
     def save_new_group(self):
         group_name = self.group_name.text()
         teacher_id = self.teacher.currentData()
@@ -682,11 +734,13 @@ class AddGroup(QMainWindow):
             add_new_connection_group_to_direction(self.direction_id, self.group_id)
             self.enroll_student.setEnabled(True)
 
+    # возврат к списку групп раннее выбранного направления
     def back_to_group(self):
         self.groups = Groups(self.direction_id)
         self.groups.show()
         self.hide()
 
+    # установка учителя (для уже существующей группы)
     def set_teacher(self, teacher_id):
         if teacher_id:
             for i in range(self.teacher.count()):
@@ -696,7 +750,7 @@ class AddGroup(QMainWindow):
         else:
             self.teacher.setCurrentIndex(0)
 
-
+    # функция обновления данныых уже существющей группы
     def update_group(self):
         group_name = self.group_name.text()
         teacher_id = self.teacher.currentData()
@@ -705,26 +759,29 @@ class AddGroup(QMainWindow):
         update_group([self.group_id, group_name, start_of_the_course, end_of_the_course])
         update_teacher_to_group_connection([self.group_id, teacher_id])
 
-    def load_table(self, rows):
+    # загрузка данных таблицы учеников группы
+    def load_table(self):
+        students = get_students_by_id(get_students_id_by_group_id(self.group_id), 0)
         self.students_list.setColumnCount(9)
         self.students_list.setHorizontalHeaderLabels(
             ["ID", "Фамилия", "Имя", "Отчество", "Номер ПФДО",
              "Номер телефона", "Электронная почта", "Дополнительно", "Действие"])
-        self.students_list.setRowCount(len(rows))
-        for i in range(len(rows)):
+        self.students_list.setRowCount(len(students))
+        for i in range(len(students)):
             id_column = 0
-            for j in range(len(rows[i]) + 1):
+            for j in range(len(students[i]) + 1):
                 if j == 12:
                     item = QtWidgets.QPushButton("Отчислить")
                     self.students_list.setCellWidget(i, id_column, item)
-                    item.clicked.connect(lambda _, row_idx=i, student_id=rows[i][0]: self.deduct(student_id))
+                    item.clicked.connect(lambda _, row_idx=i, student_id=students[i][0]: self.deduct(student_id))
                 elif j in [0, 1, 2, 3, 8, 9, 10, 11]:
-                    item = QTableWidgetItem(str(rows[i][j]))
+                    item = QTableWidgetItem(str(students[i][j]))
                     item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.students_list.setItem(i, id_column, item)
                     id_column += 1
 
+    # функция отчисления учащегося из группы
     def deduct(self, student_id):
         time_now = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
         update_student_to_group_connection([self.group_id, student_id, time_now])
@@ -735,33 +792,38 @@ class AddGroup(QMainWindow):
 
 
 class EnrollStudent(QMainWindow):
-    def __init__(self, code):
+    def __init__(self, group_id, direction_id):
         super().__init__()
         uic.loadUi(resource_path('ui_models/enroll_student.ui'), self)
         self.setFixedWidth(1103)
-        self.code = code
         self.close_btn.clicked.connect(self.close_enroll_students_window)
         disabling_buttons(self)
-        self.students = get_students_by_id(get_students_id_by_group_id(self.code), 1)
-        self.load_table(self.students)
 
-    def load_table(self, rows):
+        # переменные
+        self.group_id = group_id
+        self.direction_id = direction_id
+
+        self.load_table()
+
+    # загрузка данных
+    def load_table(self):
+        students = get_students_by_id(get_students_id_by_group_id(self.group_id), 1)
         self.students_list.setColumnCount(9)
         self.students_list.setHorizontalHeaderLabels(
             ["ID", "Фамилия", "Имя", "Отчество", "Номер ПФДО",
              "Номер телефона", "Электронная почта", "Дополнительно", "Действие"])
-        self.students_list.setRowCount(len(rows))
+        self.students_list.setRowCount(len(students))
         self.search_field.textChanged.connect(lambda text: self.on_search_text_changed(text))
 
-        for i in range(len(rows)):
+        for i in range(len(students)):
             id_column = 0
-            for j in range(len(rows[i]) + 1):
+            for j in range(len(students[i]) + 1):
                 if j == 12:
                     item = QtWidgets.QPushButton("Зачислить")
                     self.students_list.setCellWidget(i, id_column, item)
-                    item.clicked.connect(lambda _, row_idx=i, student_id=rows[i][0]: self.enroll(student_id))
+                    item.clicked.connect(lambda _, row_idx=i, student_id=students[i][0]: self.enroll(student_id))
                 elif j in [0, 1, 2, 3, 8, 9, 10, 11]:
-                    item = QTableWidgetItem(str(rows[i][j]))
+                    item = QTableWidgetItem(str(students[i][j]))
                     item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                     self.students_list.setItem(i, id_column, item)
@@ -769,14 +831,16 @@ class EnrollStudent(QMainWindow):
 
         self.students_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
+    # зачисление в группу
     def enroll(self, student_id):
         time_now = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
-        add_new_student_to_group_connection([self.code, student_id, time_now])
+        add_new_student_to_group_connection([self.group_id, student_id, time_now])
         for row in range(self.students_list.rowCount()):
             item = self.students_list.item(row, 0)
             if item and item.text() == str(student_id):
                 self.students_list.removeRow(row)
 
+    # механизм строки поиска
     def on_search_text_changed(self, text):
         search_text = text.lower()
         # Индексы столбцов, где будет поиск
@@ -790,9 +854,10 @@ class EnrollStudent(QMainWindow):
                     break
             self.students_list.setRowHidden(row, not match)
 
+    # закрытие окна выбора учеников для зачисления, возврат к окну группы
     def close_enroll_students_window(self):
         self.hide()
-        self.direction_window = AddGroup(group_id=self.code)
+        self.direction_window = AddGroup(direction_id=self.direction_id, group_id=self.group_id)
         self.direction_window.show()
 
 
@@ -804,8 +869,10 @@ class Parents(QMainWindow):
         self.close_btn.clicked.connect(lambda: close_user_window(self))
         self.search_field.textChanged.connect(lambda text: self.on_search_text_changed(text))
         disabling_buttons(self)
+
         self.load_table()
 
+    # загрузка данных
     def load_table(self):
         self.data = get_all_parents()
         self.parents_list.setColumnCount(9)
@@ -831,11 +898,13 @@ class Parents(QMainWindow):
                         self.parents_list.setItem(i, j, item)
         self.parents_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
+    # редактирование данных родителя
     def update_row(self, row_id):
         self.hide()
         self.update_parent_window = AddParent(parent_id=row_id)
         self.update_parent_window.show()
 
+    # функция поиска в таблице
     def on_search_text_changed(self, text):
         search_text = text.lower()
         # Индексы столбцов, где будет поиск
@@ -849,6 +918,7 @@ class Parents(QMainWindow):
                     break
             self.parents_list.setRowHidden(row, not match)
 
+    # функция открытия ученика через родителя
     def open_student(self, student_id):
         self.student_window = AddStudent(previous_window="parents", student_id=student_id)
         self.student_window.show()
@@ -862,11 +932,13 @@ class AddParent(QMainWindow):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_parent.ui'), self)
         self.setFixedSize(800, 437)
-        self.type_of_user_window = previous_window
         disabling_buttons(self)
+        self.close_btn.clicked.connect(self.close_current_window)
+
+        self.type_of_user_window = previous_window
         self.student_id = student_id
         self.parent_id = parent_id
-        self.close_btn.clicked.connect(self.close_current_window)
+
         if self.parent_id != 0:
             self.load_data()
             self.add_parent.setText("Сохранить")
@@ -874,6 +946,7 @@ class AddParent(QMainWindow):
         else:
             self.add_parent.clicked.connect(self.save_parent)
 
+    # добавить нового родителя в базу данных
     def save_parent(self):
         surname = self.surname.text()
         name = self.name.text()
@@ -893,6 +966,7 @@ class AddParent(QMainWindow):
             msg.setStandardButtons(QMessageBox.StandardButton.Ok)
             msg.exec()
 
+    # обнвление данных родителя
     def update(self):
         surname = self.surname.text()
         name = self.name.text()
@@ -917,6 +991,7 @@ class AddParent(QMainWindow):
                 msg.setStandardButtons(QMessageBox.StandardButton.Ok)
                 msg.exec()
 
+    # загрузка данных
     def load_data(self):
         self.data = get_parents_by_id([self.parent_id])[0]
         self.surname.setText(self.data[1])
@@ -926,11 +1001,13 @@ class AddParent(QMainWindow):
         self.email.setText(self.data[5])
         self.notes.setText(self.data[6])
 
+    # возвращение к окну с учениками
     def back_to_student(self):
         self.student_window = AddStudent(previous_window=self.type_of_user_window, student_id=self.student_id)
         self.student_window.show()
         self.hide()
 
+    # закрытие окна
     def close_current_window(self):
         surname = self.surname.text()
         name = self.name.text()
@@ -963,11 +1040,14 @@ class GroupsHistory(QMainWindow):
         uic.loadUi(resource_path("ui_models/history_of_directions.ui"), self)
         self.setFixedSize(1040, 600)
         disabling_buttons(self)
-        self.student_id = student_id
         self.close_btn.clicked.connect(self.close_history_window)
+
+        # переменные
+        self.student_id = student_id
         self.groups = get_groups_by_student_id(student_id)
         self.load_table(self.groups)
 
+    # загрузка данных
     def load_table(self, rows):
         self.history_list.setColumnCount(7)
         self.history_list.setHorizontalHeaderLabels(
@@ -984,25 +1064,26 @@ class GroupsHistory(QMainWindow):
 
         self.history_list.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
 
+    # закрыть окно
     def close_history_window(self):
         self.student_info = AddStudent(student_id=self.student_id)
         self.student_info.show()
         self.hide()
 
-
+# закрытие пользовательских окон, возвраат в главное меню
 def close_user_window(window):
     window.hide()
     window.main_w = MainWindow()
     window.main_w.show()
 
-
+# универсальная функция для возврата к пользовательским окнам (педагоги, ученики, родители, напрвления)
 def back_to_user_window(window):
     sl = {"teachers": Teachers(), "students": Students(), "directions": Directions(), "parents": Parents()}
     window.hide()
     window.user_window = sl[window.type_of_user_window]
     window.user_window.show()
 
-
+# функция корректной загрузки ui файлов
 def resource_path(relative_path):
     if hasattr(sys, "_MEIPASS"):
         return os.path.join(sys._MEIPASS, relative_path)

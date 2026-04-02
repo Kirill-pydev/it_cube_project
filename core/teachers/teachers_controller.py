@@ -107,5 +107,4 @@ def get_teacher_by_id(teacher_id):
             teacher = session.query(Teacher).filter(Teacher.id == teacher_id).one_or_none()
             return [teacher.id, teacher.surname, teacher.name, teacher.father_name, teacher.phone, teacher.email,
                     teacher.notes]
-    else:
-        return False
+    return False
