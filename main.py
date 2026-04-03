@@ -549,7 +549,7 @@ class AddStudent(QMainWindow):
             msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             result = msg.exec()
             if result == QMessageBox.StandardButton.Yes:
-                if len(self.data) == 13:
+                if self.data[0] == 0:
                     self.add_student_func()
                 else:
                     self.update_student_func()
