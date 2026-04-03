@@ -36,3 +36,10 @@ def get_groups_by_student_id(student_id):
             group = session.query(Group).filter(Group.id == connection.group_id).first()
             result.append([connection.id, group.group_name, teacher, group.start_of_the_course, group.end_of_the_course, connection.enrollment_date, connection.date_of_deduction])
         return result
+
+def delete_student_connections_to_groups(student_id):
+    with Session(engine) as session:
+        session.query(StudentsConnectionToGroup).filter(StudentsConnectionToGroup.student_id == student_id).delete(
+            synchronize_session=False)
+        session.commit()
+        return True

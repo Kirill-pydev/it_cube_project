@@ -296,6 +296,7 @@ class Students(QMainWindow):
             delete_student(row_id)
             parents_id = delete_connection_to_parent_by_student_id(row_id)
             delete_parent(parents_id)
+            delete_student_connections_to_groups(row_id)
             self.load_table()
 
     # функция открытия окна для редактирования даанных ученика
@@ -1044,20 +1045,20 @@ class GroupsHistory(QMainWindow):
 
         # переменные
         self.student_id = student_id
-        self.groups = get_groups_by_student_id(student_id)
-        self.load_table(self.groups)
+        self.load_table()
 
     # загрузка данных
-    def load_table(self, rows):
+    def load_table(self):
+        groups = get_groups_by_student_id(self.student_id)
         self.history_list.setColumnCount(7)
         self.history_list.setHorizontalHeaderLabels(
             ["id курса", "Название курса", "Преподаватель", "Дата начала курса", "Дата окончания курса",
              "Дата начала обучения", "Дата окончания обучения"])
-        self.history_list.setRowCount(len(rows))
+        self.history_list.setRowCount(len(groups))
 
-        for i in range(len(rows)):
-            for j in range(len(rows[i])):
-                item = QTableWidgetItem(str(rows[i][j]))
+        for i in range(len(groups)):
+            for j in range(len(groups[i])):
+                item = QTableWidgetItem(str(groups[i][j]))
                 item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
                 self.history_list.setItem(i, j, item)
