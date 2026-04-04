@@ -108,7 +108,7 @@ class Teachers(QMainWindow):
 
     # функция открытия окна редактирования данных преподавателя
     def update_row(self, row_id):
-        self.update_teacher_window = AddTeacher("teachers", row_id)
+        self.update_teacher_window = AddTeacher(previous_window="teachers", teacher_id=row_id)
         self.update_teacher_window.show()
         self.hide()
 
@@ -133,13 +133,13 @@ class Teachers(QMainWindow):
 
 
 class AddTeacher(QMainWindow):
-    def __init__(self, type_of_user_window, teacher_id=0):
+    def __init__(self, previous_window, teacher_id=0):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_teacher.ui'), self)
         self.setWindowTitle("Добавление учителя")
         self.setFixedSize(851, 521)
 
-        self.type_of_user_window = type_of_user_window
+        self.previous_window = previous_window
         self.teacher_id = teacher_id
 
         # Кнопки окна
@@ -301,7 +301,7 @@ class Students(QMainWindow):
 
     # функция открытия окна для редактирования даанных ученика
     def update_row(self, row_id):
-        self.update_student_window = AddStudent(student_id=row_id)
+        self.update_student_window = AddStudent(previous_window="students", student_id=row_id)
         self.update_student_window.show()
         self.hide()
 
@@ -327,7 +327,7 @@ class Students(QMainWindow):
 
 
 class AddStudent(QMainWindow):
-    def __init__(self, previous_window="students", student_id=0):
+    def __init__(self, previous_window, student_id=0):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_student.ui'), self)
         self.setFixedSize(800, 793)
@@ -335,7 +335,7 @@ class AddStudent(QMainWindow):
 
         # необходимые переменные
         self.student_id = student_id
-        self.type_of_user_window = previous_window
+        self.previous_window = previous_window
         self.parents = []
         self.data = []
 
@@ -343,8 +343,8 @@ class AddStudent(QMainWindow):
         self.open_history.clicked.connect(self.open_student_learning_history) # просмотр истории обучения
 
         # функционал добавления/удаления/редактирования данных родителей ученика
-        self.add_parent_1.clicked.connect(self.add_parent_func_1)
-        self.add_parent_2.clicked.connect(self.add_parent_func_2)
+        self.add_parent_1.clicked.connect(self.add_parent_func)
+        self.add_parent_2.clicked.connect(self.add_parent_func)
         self.add_parent_1.setEnabled(False)
         self.add_parent_2.setEnabled(False)
         self.open_history.setEnabled(False)
@@ -465,34 +465,11 @@ class AddStudent(QMainWindow):
                 self.update_parent_2.show()
 
     # функция для добавления родителя ученика (1)
-    def add_parent_func_1(self):
-        self.parents_w = AddParent(student_id=self.student_id)
-        self.parents_w.text_submitted.connect(self.parent_1_label)
+    def add_parent_func(self):
+        self.parents_w = AddParent(previous_window=self.previous_window, student_id=self.student_id)
+        # self.parents_w.text_submitted.connect(self.parent_1_label)
         self.parents_w.show()
-
-    # функция отображения ФИО родителя (1) в карточке ученика, после добавления родителя
-    def parent_1_label(self, lst):
-        self.parents.append(lst)
-        self.add_parent_1.hide()
-        self.parent_1.show()
-        self.parent_1.setText(' '.join(lst[1:]))
-        self.delete_parent_1.show()
-        self.update_parent_1.show()
-
-    # функция для добавления родителя ученика (2)
-    def add_parent_func_2(self):
-        self.parents_w = AddParent(student_id=self.student_id)
-        self.parents_w.text_submitted.connect(self.parent_2_label)
-        self.parents_w.show()
-
-    # функция отображения ФИО родителя (2) в карточке ученика, после добавления родителя
-    def parent_2_label(self, lst):
-        self.parents.append(lst)
-        self.add_parent_2.hide()
-        self.parent_2.show()
-        self.parent_2.setText(' '.join(lst[1:]))
-        self.delete_parent_2.show()
-        self.update_parent_2.show()
+        self.hide()
 
     # функция открытия истории обучения ученика
     def open_student_learning_history(self):
@@ -525,7 +502,7 @@ class AddStudent(QMainWindow):
 
     # обновления данных родителя
     def update_parent(self, parent_position):
-        self.update_parent_window = AddParent(previous_window=self.type_of_user_window, student_id=self.student_id,
+        self.update_parent_window = AddParent(previous_window=self.previous_window, student_id=self.student_id,
                                               parent_id=self.parents[parent_position][0])
         self.update_parent_window.show()
         self.hide()
@@ -554,7 +531,7 @@ class AddStudent(QMainWindow):
                     self.add_student_func()
                 else:
                     self.update_student_func()
-        if self.type_of_user_window == "parents":
+        if self.previous_window == "parents":
             self.open_parents()
         else:
             back_to_user_window(self)
@@ -592,13 +569,13 @@ class Directions(QMainWindow):
 
     # функцияя открытия окна направления
     def show_message(self, direction_id):
-        self.add = Groups(direction_id)
+        self.add = Groups(direction_id=direction_id, previous_window="directions")
         self.add.show()
         self.hide()
 
 
 class AddDirection(QMainWindow):
-    def __init__(self, type_of_user_window="directions"):
+    def __init__(self, previous_window):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_update_direction.ui'), self)
         self.setFixedSize(521, 209)
@@ -607,7 +584,7 @@ class AddDirection(QMainWindow):
         self.save.clicked.connect(self.save_direction)
 
         # переменные
-        self.type_of_user_window = type_of_user_window
+        self.previous_window = previous_window
 
     # создание нового направления
     def save_direction(self):
@@ -622,7 +599,7 @@ class AddDirection(QMainWindow):
 
 
 class Groups(QMainWindow):
-    def __init__(self, direction_id, type_of_user_window="directions"):
+    def __init__(self, direction_id, previous_window):
         super().__init__()
         uic.loadUi(resource_path('ui_models/groups.ui'), self)
         self.setFixedWidth(800)
@@ -632,7 +609,7 @@ class Groups(QMainWindow):
         self.delete_direction.clicked.connect(self.func_delete_direction)
 
         # переменные
-        self.type_of_user_window = type_of_user_window
+        self.previous_window = previous_window
         self.direction_id = direction_id
 
         self.load_data()
@@ -659,7 +636,7 @@ class Groups(QMainWindow):
 
     # взаимодействие с данными уже созданной группы
     def show_message(self, group_id):
-        self.open_group = AddGroup(direction_id=self.direction_id, group_id=group_id)
+        self.open_group = AddGroup(direction_id=self.direction_id, group_id=group_id, previous_window=self.previous_window)
         self.open_group.show()
         self.hide()
 
@@ -681,7 +658,7 @@ class Groups(QMainWindow):
 
 
 class AddGroup(QMainWindow):
-    def __init__(self, direction_id, group_id=None):
+    def __init__(self, previous_window, direction_id, group_id=None):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_update_group.ui'), self)
         # всё, что связанно с окном
@@ -692,6 +669,7 @@ class AddGroup(QMainWindow):
         self.enroll_student.setEnabled(False)
 
         # переменные
+        self.previous_window = previous_window
         self.group_id = group_id
         self.direction_id = direction_id
         self.direction = get_direction_by_id(self.direction_id)
@@ -737,7 +715,7 @@ class AddGroup(QMainWindow):
 
     # возврат к списку групп раннее выбранного направления
     def back_to_group(self):
-        self.groups = Groups(self.direction_id)
+        self.groups = Groups(direction_id=self.direction_id, previous_window=self.previous_window)
         self.groups.show()
         self.hide()
 
@@ -902,7 +880,7 @@ class Parents(QMainWindow):
     # редактирование данных родителя
     def update_row(self, row_id):
         self.hide()
-        self.update_parent_window = AddParent(parent_id=row_id)
+        self.update_parent_window = AddParent(previous_window="parents", parent_id=row_id)
         self.update_parent_window.show()
 
     # функция поиска в таблице
@@ -927,24 +905,29 @@ class Parents(QMainWindow):
 
 
 class AddParent(QMainWindow):
-    text_submitted = pyqtSignal(list)
-
-    def __init__(self, previous_window="parents", student_id=0, parent_id=0):
+    def __init__(self, previous_window, student_id=0, parent_id=0):
         super().__init__()
         uic.loadUi(resource_path('ui_models/add_parent.ui'), self)
         self.setFixedSize(800, 437)
         disabling_buttons(self)
         self.close_btn.clicked.connect(self.close_current_window)
 
-        self.type_of_user_window = previous_window
+        self.previous_window = previous_window
         self.student_id = student_id
         self.parent_id = parent_id
 
         if self.parent_id != 0:
             self.load_data()
             self.add_parent.setText("Сохранить")
-            self.add_parent.clicked.connect(self.update)
+            self.add_parent.clicked.connect(self.update_parent)
         else:
+            surname = self.surname.text()
+            name = self.name.text()
+            father_name = self.father_name.text()
+            phone_number = self.phone_number.text()
+            email = self.email.text()
+            notes = self.notes.toPlainText()
+            self.data = [self.parent_id, surname, name, father_name, phone_number, email, notes]
             self.add_parent.clicked.connect(self.save_parent)
 
     # добавить нового родителя в базу данных
@@ -959,7 +942,7 @@ class AddParent(QMainWindow):
         parent_data = add_parent(sp)
         if parent_data["succes"]:
             add_new_p_connection([parent_data["parent_id"], self.student_id])
-            self.text_submitted.emit([parent_data["parent_id"], surname, name, father_name])
+            self.back_to_student()
             self.hide()
         else:
             msg = QMessageBox()
@@ -968,7 +951,7 @@ class AddParent(QMainWindow):
             msg.exec()
 
     # обнвление данных родителя
-    def update(self):
+    def update_parent(self):
         surname = self.surname.text()
         name = self.name.text()
         father_name = self.father_name.text()
@@ -1004,7 +987,7 @@ class AddParent(QMainWindow):
 
     # возвращение к окну с учениками
     def back_to_student(self):
-        self.student_window = AddStudent(previous_window=self.type_of_user_window, student_id=self.student_id)
+        self.student_window = AddStudent(previous_window=self.previous_window, student_id=self.student_id)
         self.student_window.show()
         self.hide()
 
@@ -1024,14 +1007,14 @@ class AddParent(QMainWindow):
             msg.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
             result = msg.exec()
             if result == QMessageBox.StandardButton.Yes:
-                if len(self.data) == 6:
+                if self.data[0] == 0:
                     self.save_parent()
                 else:
-                    self.update()
-        if self.type_of_user_window == "parents" and self.student_id == 0:
+                    self.update_parent()
+        if self.previous_window == "parents" and self.student_id == 0:
             back_to_user_window(self)
-        elif (self.type_of_user_window == "parents" and self.student_id != 0) or (
-                self.type_of_user_window == "students" and self.student_id != 0):
+        elif (self.previous_window == "parents" and self.student_id != 0) or (
+                self.previous_window == "students" and self.student_id != 0):
             self.back_to_student()
 
 
@@ -1071,7 +1054,7 @@ class GroupsHistory(QMainWindow):
         self.student_info.show()
         self.hide()
 
-# закрытие пользовательских окон, возвраат в главное меню
+# закрытие пользовательских окон, возврат в главное меню
 def close_user_window(window):
     window.hide()
     window.main_w = MainWindow()
@@ -1081,7 +1064,7 @@ def close_user_window(window):
 def back_to_user_window(window):
     sl = {"teachers": Teachers(), "students": Students(), "directions": Directions(), "parents": Parents()}
     window.hide()
-    window.user_window = sl[window.type_of_user_window]
+    window.user_window = sl[window.previous_window]
     window.user_window.show()
 
 # функция корректной загрузки ui файлов
