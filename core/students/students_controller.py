@@ -150,7 +150,7 @@ def get_students_by_id(data, mode):
 
 def get_student_by_id(student_id):
     with Session(engine) as session:
-        student = session.query(Student).filter(Student.id == student_id).one_or_none()
+        student = session.query(Student).filter(Student.id.is_(student_id)).one_or_none()
         result = [
                 student.id,
                 student.surname,

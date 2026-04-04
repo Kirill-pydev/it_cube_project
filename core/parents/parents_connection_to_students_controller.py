@@ -13,23 +13,23 @@ def add_new_p_connection(data):
 
 def delete_connection_to_parent_by_student_id(student_id):
     with Session(engine) as session:
-        res = session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.student_id == student_id).all()
+        res = session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.student_id.is_(student_id)).all()
         parents_id = [parent.parent_id for parent in res]
-        session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.student_id == student_id).delete(synchronize_session=False)
+        session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.student_id.is_(student_id)).delete(synchronize_session=False)
         session.commit()
         return parents_id
 
 def delete_connection_by_student_and_parent_id(data):
     student_id, parent_id = data
     with Session(engine) as session:
-        session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.student_id == student_id, ParentsConnectionToStudents.parent_id == parent_id).delete(synchronize_session=False)
+        session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.student_id.is_(student_id), ParentsConnectionToStudents.parent_id.is_(parent_id)).delete(synchronize_session=False)
         session.commit()
         return True
 
 
 def get_parents_by_student_id(student_id):
     with Session(engine) as session:
-        res = session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.student_id == student_id).all()
+        res = session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.student_id.is_(student_id)).all()
         parents_id = []
         for i in range(len(res)):
             parents_id.append(res[i].parent_id)

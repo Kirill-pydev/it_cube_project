@@ -12,7 +12,7 @@ def add_parent(data):
         valid_number = True
     if (email != "" and is_valid_email(email)) or email == "":
         valid_email = True
-    if valid_email and valid_number:
+    if valid_email and valid_number and surname != '' and name != '':
         parent = Parent(
             surname=surname,
             name=name,
@@ -31,6 +31,8 @@ def add_parent(data):
             res["message"].append("Неверный формат электронной почты")
         if not valid_number:
             res["message"].append("Неверный формат номера телефона")
+        else:
+            res["message"].append("Заполните имя и фамилию")
     return res
 
 
@@ -46,7 +48,7 @@ def get_all_parents():
         parents = session.query(Parent).all()
         result = []
         for parent in parents:
-            student_id = session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.parent_id == parent.id).first()
+            student_id = session.query(ParentsConnectionToStudents).filter(ParentsConnectionToStudents.parent_id.is_(parent.id)).first()
             result.append([parent.id,
              parent.surname,
              parent.name,

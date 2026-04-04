@@ -104,7 +104,7 @@ def update_teacher(data):
 def get_teacher_by_id(teacher_id):
     if teacher_id:
         with Session(engine) as session:
-            teacher = session.query(Teacher).filter(Teacher.id == teacher_id).one_or_none()
+            teacher = session.query(Teacher).filter(Teacher.id.is_(teacher_id)).one_or_none()
             return [teacher.id, teacher.surname, teacher.name, teacher.father_name, teacher.phone, teacher.email,
                     teacher.notes]
     return False
