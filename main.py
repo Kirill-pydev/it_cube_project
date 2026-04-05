@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QPushButton, QListWidgetItem, QHeaderView, \
     QMessageBox
 from PyQt6 import uic, QtWidgets
-from PyQt6.QtCore import QDate, pyqtSignal
+from PyQt6.QtCore import QDate
 import sys
 import os
 
