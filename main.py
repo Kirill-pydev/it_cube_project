@@ -321,7 +321,7 @@ class Students(QMainWindow):
 
     # функция открытия окна для добавления нового ученика
     def open_add_student(self):
-        self.add_student_window = AddStudent()
+        self.add_student_window = AddStudent(previous_window="students")
         self.add_student_window.show()
         self.hide()
 
